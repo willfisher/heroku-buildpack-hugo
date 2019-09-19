@@ -44,8 +44,7 @@ mv $CACHE_DIR/hugo $BUILD_DIR/hugo | indent
 
 # if the user has a script/pre-build script, run that
 PRE_BUILD_SCRIPT="$BUILD_DIR/script/pre-build"
-if [[ -x "$PRE_BUILD_SCRIPT" ]]
-then
+if [ -x "$PRE_BUILD_SCRIPT" ]; then
   echo "\n-----> Running pre-build script: $PRE_BUILD_SCRIPT"
   $PRE_BUILD_SCRIPT "$BUILD_DIR"
 fi
