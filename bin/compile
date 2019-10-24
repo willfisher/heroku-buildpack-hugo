@@ -35,6 +35,26 @@ mkdir -p $CACHE_DIR/$RELEASE_NAME
 tar -zxvf $CACHE_DIR/$FILE_NAME -C $CACHE_DIR
 mv $CACHE_DIR/hugo $BUILD_DIR/hugo
 
+# Export all of the user's ENV vars into this environment
+# See docs for what's going on here:
+#   https://devcenter.heroku.com/articles/buildpack-api
+# tl;dr, heroku only shows the dyno's config vars as files, not on the env
+# themselves
+echo "\n-----> Exporting ENV files in $ENV_DIR into the environment"
+export_env_dir() {
+  env_dir=$1
+  whitelist_regex=${2:-''}
+  blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
+      export "$e=$(cat $env_dir/$e)"
+      :
+    done
+  fi
+}
+export_env_dir $ENV_DIR
+
 # if the user has a script/pre-build script, run that
 PRE_BUILD_SCRIPT="$BUILD_DIR/script/pre-build"
 if [ -x "$PRE_BUILD_SCRIPT" ]; then
