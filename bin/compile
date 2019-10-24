@@ -54,4 +54,4 @@ fi
 echo "\n-----> Building the site"
 cd $BUILD_DIR
 mkdir -p static
-./hugo
+./hugo --cleanDestinationDir --ignoreCache
