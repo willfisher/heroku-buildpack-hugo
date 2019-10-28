@@ -55,11 +55,11 @@ export_env_dir() {
 }
 export_env_dir $ENV_DIR
 
-# if the user has a script/pre-build script, run that
-PRE_BUILD_SCRIPT="$BUILD_DIR/script/pre-build"
+# if the user has a script/pre-hugo-build script, run that
+PRE_BUILD_SCRIPT="$BUILD_DIR/script/pre-hugo-build"
 if [ -x "$PRE_BUILD_SCRIPT" ]; then
   echo "\n-----> Running pre-build script: $PRE_BUILD_SCRIPT"
-  $PRE_BUILD_SCRIPT "$BUILD_DIR"
+  $PRE_BUILD_SCRIPT "$BUILD_DIR" "$CACHE_DIR" "$ENV_DIR"
 fi
 
 # Fetch a theme specified in the .hugotheme file
@@ -75,3 +75,11 @@ echo "\n-----> Building the site"
 cd $BUILD_DIR
 mkdir -p static
 ./hugo --cleanDestinationDir --ignoreCache
+
+# if the user has a script/post-hugo-build script, run that
+POST_BUILD_SCRIPT="$BUILD_DIR/script/post-hugo-build"
+if [ -x "$POST_BUILD_SCRIPT" ]; then
+  echo "\n-----> Running post-build script: $POST_BUILD_SCRIPT"
+  $POST_BUILD_SCRIPT "$BUILD_DIR" "$CACHE_DIR" "$ENV_DIR"
+fi
+
