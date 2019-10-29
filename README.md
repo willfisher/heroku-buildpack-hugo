@@ -1,3 +1,31 @@
+**[🍴 Fork Alert 🍴]**
+
+This is a slightly-modified fork of [@roperzh's Hugo
+buildpack](https://github.com/roperzh/heroku-buildpack-hugo). We have made a
+few changes and additions to suit our static content needs at [Test
+Double](https://testdouble.com).
+
+* Any build failures will now cause the script to exit with a non-zero status,
+  which in turn will cause Heroku to recognize that the build has failed and
+  prevent a broken build's deployment. (See [this
+  commit](https://github.com/testdouble/heroku-buildpack-hugo/commit/64a8b54d6206e41afa9d001eb9dce8cba4054141))
+* So that you can toggle behavior of the Hugo build based on the environment
+  (using the `[getenv](https://gohugo.io/functions/getenv/#readout)` function,
+  for example), all of the environment variables set on the Heroku dyno are
+  assigned (by default, [they're only available to the buildpack as readable
+  files in a
+  directory](https://devcenter.heroku.com/articles/buildpack-api#bin-compile))
+* If you define executable files in `script/pre-hugo-build` and
+  `script/post-hugo-build`, those will be run before and after the hugo build.
+  This can be useful for fetching supporting assets prior to running the build
+  and trimming the size of the Heroku slug prior to the `compile` phase's exit
+* To make _absolutely certain_ that there are no out-of-date cached items or
+  residual assets from a previous build, the `hugo` command is run with both
+  `--cleanDestinationDir` and `--ignoreCache` flags
+
+**[/🍴 Fork Alert 🍴]**
+---
+
 Heroku buildpack: Hugo
 ===
 
